@@ -12,6 +12,43 @@ import subprocess
 # -----------------------------
 INCLUDE_EXCLUDED = False  # toggle for including ignored files (False = only tracked by Git)
 
+# edit these to ignore specific folders or files
+IGNORE = {
+    "folders": {
+        "__pycache__",
+        ".git",
+        "node_modules",
+        ".venv",
+        "venv",
+        "env",
+        ".idea",
+        ".vscode",
+        ".mypy_cache",
+        ".pytest_cache",
+        "dist",
+        "build",
+        "egg-info",
+        "general",
+        "arc",
+        "0.general",
+    },
+    "files": {
+        ".DS_Store",
+        "Thumbs.db",
+        ".env",
+        ".env.local",
+        ".env.prod",
+    },
+    "extensions": {
+        ".pyc",
+        ".pyo",
+        ".exe",
+        ".dll",
+        ".so",
+        ".class",
+    },
+}
+
 # -----------------------------
 # GET PROJECT FILES FROM GIT
 # -----------------------------
@@ -21,7 +58,30 @@ def get_git_files():
     files = result.stdout.splitlines()
     return files
 
-all_files = get_git_files()
+# -----------------------------
+# FILTER FILES
+# -----------------------------
+def should_ignore(file_path: str) -> bool:
+    parts = Path(file_path).parts
+
+    # check if any folder in the path is ignored
+    for part in parts[:-1]:
+        if part in IGNORE["folders"]:
+            return True
+
+    # check filename
+    filename = parts[-1]
+    if filename in IGNORE["files"]:
+        return True
+
+    # check extension
+    ext = Path(file_path).suffix
+    if ext in IGNORE["extensions"]:
+        return True
+
+    return False
+
+all_files = [f for f in get_git_files() if not should_ignore(f)]
 
 # -----------------------------
 # BUILD TREE STRUCTURE
@@ -55,7 +115,6 @@ for file_path in all_files:
 def print_tree(d, prefix=""):
     for key, value in sorted(d.items()):
         if isinstance(value, dict):
-            # folder
             subfolders = sum(1 for v in value.values() if isinstance(v, dict))
             files = sum(1 for v in value.values() if v is None)
             total_files = sum_files(value)
@@ -82,6 +141,11 @@ total_folders = sum(1 for f in tree if isinstance(tree[f], dict))
 # -----------------------------
 # PRINT RESULTS
 # -----------------------------
+print("\n================= IGNORE CONFIG =================\n")
+print(f"Ignored folders   : {', '.join(sorted(IGNORE['folders']))}")
+print(f"Ignored files     : {', '.join(sorted(IGNORE['files']))}")
+print(f"Ignored extensions: {', '.join(sorted(IGNORE['extensions']))}")
+
 print("\n================= PROJECT TREE =================\n")
 print_tree(tree)
 
