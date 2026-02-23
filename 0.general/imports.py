@@ -17,6 +17,7 @@ pip install redis
 pip install elasticsearch
 pip install streamlit
 pip install docker
+pip install multipart
 """
 
 # ---------------------------------------

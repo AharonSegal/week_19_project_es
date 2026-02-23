@@ -211,13 +211,13 @@ services:
   ingestion_service:
     build:
       context: .
-      dockerfile: ingestion_service/Dockerfile
+      dockerfile: ingestion_service_api/Dockerfile
     restart: unless-stopped
     ports:
       - "8000:8000"
     depends_on:
       - kafka
-      - GridFS_service
+      - gridfs_service
     environment:
       KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
       KAFKA_TOPIC_RAW: "RAW"
@@ -230,10 +230,10 @@ services:
 # +--------------------+
 # |  GridFS_service    |
 # +--------------------+
-  GridFS_service:
+  gridfs_service:
     build:
       context: .
-      dockerfile: GridFS_service/Dockerfile
+      dockerfile: GridFS_service_api/Dockerfile
     restart: unless-stopped
     ports:
       - "8001:8001"

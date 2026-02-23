@@ -21,24 +21,27 @@ logger = get_logger("ingestion-service")
 
 # ---- config ----
 config = IngestionConfig()
-config.validate()
 logger.info("Config loaded: image_dir=%s, topic=%s", config.image_directory, config.kafka_topic_raw)
 
-# ---- components (dependency injection via constructor) ----
+# ---- components ----
+# Extracts text from an image using pytesseract.
 ocr_engine = OCREngine(logger=logger)
 metadata_extractor = MetadataExtractor(logger=logger)
 
+# passes image data to GridFS
 mongo_client = MongoLoaderClient(
     gridfs_service_url=config.gridfs_service_url,
     logger=logger,
 )
 
+# services Producer
 publisher = KafkaPublisher(
     bootstrap_servers=config.bootstrap_servers,
     topic_name=config.kafka_topic_raw,
     logger=logger,
 )
 
+# Flow manager
 orchestrator = IngestionOrchestrator(
     config=config,
     ocr_engine=ocr_engine,
