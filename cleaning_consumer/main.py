@@ -1,0 +1,3 @@
+"""
+RAW event processor
+"""
