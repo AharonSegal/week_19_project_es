@@ -1,6 +1,11 @@
 FROM python:3.12-slim
+
 WORKDIR /app
-COPY dashboard/requirements.txt .
+
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-COPY dashboard/ ./dashboard/
-CMD ["streamlit", "run", "dashboard/dashboard.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
+
+COPY shared/ ./shared/
+COPY dashboard/ ./
+
+CMD ["streamlit", "run", "dashboard.py", "--server.port", "8501", "--server.address", "0.0.0.0"]

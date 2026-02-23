@@ -1,6 +1,0 @@
-pymongo
-redis
-streamlit
-plotly
-pandas
-python-dotenv
