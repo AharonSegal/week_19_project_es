@@ -34,4 +34,6 @@ class cleanOrchestrator():
             image = self.kafka_consumer.consumer.poll(1.0)
             if image is None:
                 continue
+
+            
     
