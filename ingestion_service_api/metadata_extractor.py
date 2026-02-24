@@ -52,3 +52,6 @@ class MetadataExtractor:
         # [:16]                       → take first 16 characters — short but still unique
         image_id = hashlib.sha256(file_bytes).hexdigest()[:16]
         return image_id
+    
+    
+metadata = MetadataExtractor()

@@ -18,7 +18,7 @@ IGNORE = {
         "__pycache__",
         ".git",
         "node_modules",
-        ".venv",
+        ".venv", 
         "venv",
         "env",
         ".idea",

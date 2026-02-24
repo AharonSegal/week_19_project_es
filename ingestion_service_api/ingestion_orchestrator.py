@@ -8,11 +8,12 @@ import os
 from logging import Logger
 from pathlib import Path
 
-from ingestionConfig import IngestionConfig
+from ingestion_config import IngestionConfig
 from OCRengine import OCREngine
-from metadata_extractor import MetadataExtractor
+from metadata_extractor import MetadataExtractor,metadata
 from mongo_client import MongoLoaderClient
 from kafka_publisher import KafkaPublisher
+from ingestion_service_api.ingestion_config import IngestionConfig
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif", ".webp"}
 
@@ -28,11 +29,11 @@ class IngestionOrchestrator:
         publisher: KafkaPublisher,
         logger: Logger,
     ):
-        self.config = config
-        self.ocr_engine = ocr_engine
-        self.metadata_extractor = metadata_extractor
-        self.mongo_client = mongo_client
-        self.publisher = publisher
+        self.config = config()
+        self.ocr_engine = ocr_engine()
+        self.metadata_extractor = metadata
+        self.mongo_client = mongo_client()
+        self.publisher = publisher()
         self.logger = logger
 
     def process_image(self, path: str) -> None:
@@ -80,7 +81,7 @@ class IngestionOrchestrator:
         Returns:
             Summary dict with processed/failed counts.
         """
-        image_dir = self.config.image_directory
+        image_dir =self.config.
         self.logger.info("Scanning image directory: %s", image_dir)
 
         files = [
@@ -104,3 +105,5 @@ class IngestionOrchestrator:
         summary = {"processed": processed, "failed": failed, "total": len(files)}
         self.logger.info("Ingestion complete: %s", summary)
         return summary
+
+

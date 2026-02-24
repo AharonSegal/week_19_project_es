@@ -5,6 +5,7 @@ Constructor: gridfs_service_url, logger
 
 from logging import Logger
 from pathlib import Path
+from ingestion_service_api.ingestion_config import IngestionConfig
 
 import requests
 

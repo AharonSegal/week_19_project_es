@@ -276,3 +276,7 @@ docker compose -f docker-compose.deps.yml logs --tail=200 cloudbeaver
 {   base cmd    } {     file name       } {  debug cmd  } {      }
 docker compose -f docker-compose.deps.yml ps               -a
 
+
+CLADUE CODE 
+
+claude --dangerously-skip-permissions
