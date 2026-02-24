@@ -12,6 +12,8 @@ router = APIRouter(
 )
 
 
-@router.get("/alerts-by-border-and-priority")
-def first():
-    pass
+@router.post("/upload")        # ← same path, same method
+def upload(file: UploadFile, image_id: str):
+    """
+    get from Ingestion a file to be uploaded
+    """

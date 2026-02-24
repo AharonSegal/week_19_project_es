@@ -4,10 +4,10 @@ Extracts basic metadata from an image file and generates a unique image_id.
 Constructor: logger
 """
 
-import hashlib
 import os
 from logging import Logger
 from pathlib import Path
+import hashlib
 
 try:
     from PIL import Image
@@ -27,44 +27,28 @@ class MetadataExtractor:
         Returns:
             dict with keys: filename, file_size, width, height, format
         """
-        path = Path(image_path)
-        self.logger.info("Extracting metadata for: %s", path.name)
-
-        metadata = {
-            "filename": path.name,
-            "file_size": os.path.getsize(image_path),
-            "format": path.suffix.lstrip(".").upper(),
-        }
-
-        # dimensions from Pillow if available
-        if Image is not None:
-            try:
-                with Image.open(image_path) as img:
-                    metadata["width"], metadata["height"] = img.size
-            except Exception as e:
-                self.logger.warning("Could not read image dimensions: %s", e)
-                metadata["width"] = None
-                metadata["height"] = None
-        else:
-            metadata["width"] = None
-            metadata["height"] = None
-
-        self.logger.info("Metadata: %s", metadata)
-        return metadata
+        with Image.open(image_path) as img:
+            metadata = {
+                "filename": os.path.basename(image_path),
+                "format": img.format,
+                "width": img.size[0],
+                "height": img.size[1],
+                "mode": img.mode,             
+                "file_size": os.path.getsize(image_path),
+            }
+            return metadata
 
     def generate_image_id(self, image_path: str) -> str:
         """
-        Generate a unique image_id based on file content hash.
-
-        Uses SHA-256 of the file bytes so the same image always gets the same ID.
+        Generate a unique ID from file content.
+        Same file = same ID.
         """
-        self.logger.info("Generating image_id for: %s", Path(image_path).name)
-
-        sha = hashlib.sha256()
+        # open file in binary mode and read all bytes
         with open(image_path, "rb") as f:
-            for chunk in iter(lambda: f.read(8192), b""):
-                sha.update(chunk)
+            file_bytes = f.read()
 
-        image_id = sha.hexdigest()[:16]
-        self.logger.info("image_id: %s", image_id)
+        # hashlib.sha256(file_bytes)  → creates a hash object from the bytes
+        # .hexdigest()                → converts hash to a 64-character string like "a3f2b1c8..."
+        # [:16]                       → take first 16 characters — short but still unique
+        image_id = hashlib.sha256(file_bytes).hexdigest()[:16]
         return image_id

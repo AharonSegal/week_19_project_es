@@ -1,5 +1,4 @@
 """
-mongo_client.py
 Sends the binary file to the GridFS Service via HTTP POST.
 Constructor: gridfs_service_url, logger
 """
@@ -8,7 +7,6 @@ from logging import Logger
 from pathlib import Path
 
 import requests
-
 
 class MongoLoaderClient:
 
@@ -30,24 +28,21 @@ class MongoLoaderClient:
         filename = Path(file_path).name
         url = f"{self.gridfs_service_url}/upload"
 
-        self.logger.info(
-            "Sending file %s (image_id=%s) to GridFS at %s",
-            filename, image_id, url,
-        )
+        self.logger.info("Sending %s (image_id=%s) to %s", filename, image_id, url)
 
-        try:
-            with open(file_path, "rb") as f:
-                files = {"file": (filename, f)}
-                data = {"image_id": image_id}
-                response = requests.post(url, files=files, data=data, timeout=30)
-
-            response.raise_for_status()
-            result = response.json()
-            self.logger.info("GridFS upload success for image_id=%s", image_id)
-            return result
-
-        except requests.RequestException as e:
-            self.logger.error(
-                "GridFS upload failed for image_id=%s: %s", image_id, e
+        # open file in binary mode and send as multipart form data
+        # files = the binary image
+        # data  = the image_id so GridFS knows what to name it
+        with open(file_path, "rb") as f:
+            response = requests.post(
+                url,
+                files={"file": (filename, f)},
+                data={"image_id": image_id},
+                timeout=30,
             )
-            raise
+
+        # raise an exception if status code is 4xx or 5xx
+        response.raise_for_status()
+
+        self.logger.info("Upload success for image_id=%s", image_id)
+        return response.json()
