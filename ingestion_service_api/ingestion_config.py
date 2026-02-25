@@ -15,3 +15,4 @@ class IngestionConfig:
         self.kafka_topic_raw = os.getenv("KAFKA_TOPIC_RAW", "raw")
         self.gridfs_service_url = os.getenv("GRIDFS_SERVICE_URL", "http://localhost:8001")
 
+config = IngestionConfig()

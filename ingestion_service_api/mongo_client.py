@@ -5,8 +5,6 @@ Constructor: gridfs_service_url, logger
 
 from logging import Logger
 from pathlib import Path
-from ingestion_service_api.ingestion_config import IngestionConfig
-
 import requests
 
 class MongoLoaderClient:
@@ -47,3 +45,4 @@ class MongoLoaderClient:
 
         self.logger.info("Upload success for image_id=%s", image_id)
         return response.json()
+

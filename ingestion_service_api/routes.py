@@ -6,11 +6,7 @@ FastAPI routes for the Ingestion Service.
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from ingestion_orchestrator import IngestionOrchestrator
 from main import orchestrator
-
 router = APIRouter()
-
-# will be set from main.py
-orchestrator: IngestionOrchestrator = orchestrator
 
 
 @router.post("/ingest")

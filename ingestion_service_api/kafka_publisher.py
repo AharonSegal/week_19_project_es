@@ -44,3 +44,4 @@ class KafkaPublisher:
         except Exception as e:
             self.logger.error("Failed to publish event: %s", e)
             raise
+

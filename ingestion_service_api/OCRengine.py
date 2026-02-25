@@ -42,3 +42,4 @@ class OCREngine:
         except Exception as e:
             self.logger.error("OCR failed for %s: %s", image_path, e)
             raise
+

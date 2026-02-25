@@ -27,7 +27,7 @@ pip install \
   confluent-kafka
 
 
-uvicorn main:app --reload
+uvicorn ingestion_service_api.main:app --reload
 # ╔══════════════════════════════════════════════════════╗
 # ║   BASIC GIT COMMANDS                                 ║
 # ╚══════════════════════════════════════════════════════╝

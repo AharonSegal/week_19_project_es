@@ -54,4 +54,3 @@ class MetadataExtractor:
         return image_id
     
     
-metadata = MetadataExtractor()

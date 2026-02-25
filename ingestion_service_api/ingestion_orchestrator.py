@@ -1,7 +1,7 @@
 """
 ingestion_orchestrator.py
 Scans the local image directory, processes each image end-to-end.
-Constructor: config, ocr_engine, metadata_extractor, mongo_client, publisher, logger
+Constructor: config, ocr_engine, metadata_extractor, Gridfs, publisher, logger
 """
 
 import os
@@ -10,10 +10,9 @@ from pathlib import Path
 
 from ingestion_config import IngestionConfig
 from OCRengine import OCREngine
-from metadata_extractor import MetadataExtractor,metadata
+from metadata_extractor import MetadataExtractor
 from mongo_client import MongoLoaderClient
 from kafka_publisher import KafkaPublisher
-from ingestion_service_api.ingestion_config import IngestionConfig
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif", ".webp"}
 
@@ -24,16 +23,16 @@ class IngestionOrchestrator:
         self,
         config: IngestionConfig,
         ocr_engine: OCREngine,
-        metadata_extractor: MetadataExtractor,
-        mongo_client: MongoLoaderClient,
+        metadata: MetadataExtractor,
+        Gridfs: MongoLoaderClient,
         publisher: KafkaPublisher,
         logger: Logger,
     ):
-        self.config = config()
-        self.ocr_engine = ocr_engine()
+        self.config = config
+        self.ocr_engine = ocr_engine
         self.metadata_extractor = metadata
-        self.mongo_client = mongo_client()
-        self.publisher = publisher()
+        self.Gridfs = Gridfs
+        self.publisher = publisher
         self.logger = logger
 
     def process_image(self, path: str) -> None:
@@ -59,7 +58,7 @@ class IngestionOrchestrator:
             raw_text = self.ocr_engine.extract_text(path)
 
             # 4. send binary file to GridFS service
-            self.mongo_client.send(path, image_id)
+            self.Gridfs.send(path, image_id)
 
             # 5. publish RAW event
             event = {
@@ -81,7 +80,7 @@ class IngestionOrchestrator:
         Returns:
             Summary dict with processed/failed counts.
         """
-        image_dir =self.config.
+        image_dir =self.config.image_directory
         self.logger.info("Scanning image directory: %s", image_dir)
 
         files = [
