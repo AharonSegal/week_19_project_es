@@ -1,39 +1,29 @@
 """
-kafka_publisher.py
-Publishes events to a Kafka topic.
-Uses shared/kafka_producer.py for the connection.
+shared/kafka_publisher.py
+Generic Kafka publisher — reused by all services.
 Constructor: bootstrap_servers, topic_name, logger
- Gets logger from main 
 """
 
 from logging import Logger
 import json
 
-from shared.kafka_producer import KafkaProducerClient
+from confluent_kafka import Producer
 
 
 class KafkaPublisher:
 
     def __init__(self, bootstrap_servers: str, topic_name: str, logger: Logger):
-        self.producer = KafkaProducerClient(bootstrap_servers)
+        self.producer = Producer({"bootstrap.servers": bootstrap_servers})
         self.topic_name = topic_name
-
         self.logger = logger
         self.logger.info("KafkaPublisher ready — topic: %s", topic_name)
 
-
     def publish(self, event: dict) -> None:
-        """
-        Publish an event dict to the Kafka topic.
-
-        Args:
-            event: dict containing image_id, raw_text, metadata, etc.
-        """
         image_id = event.get("image_id", "unknown")
         self.logger.info("Publishing event for image_id=%s to %s", image_id, self.topic_name)
 
         try:
-            self.producer.send(
+            self.producer.produce(
                 topic=self.topic_name,
                 key=image_id,
                 value=json.dumps(event).encode("utf-8"),
@@ -44,4 +34,3 @@ class KafkaPublisher:
         except Exception as e:
             self.logger.error("Failed to publish event: %s", e)
             raise
-

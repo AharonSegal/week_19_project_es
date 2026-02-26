@@ -12,7 +12,7 @@ nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('punkt_tab')
 
-def text_cleaner(txt):
+def textCleaner(txt):
     # Step 1: Lowercase the entire text
     # "Hello World" -> "hello world"
     txt = txt.lower()

@@ -9,10 +9,9 @@ from logging import Logger
 from pathlib import Path
 import hashlib
 
-try:
-    from PIL import Image
-except ImportError:
-    Image = None
+
+from PIL import Image
+
 
 
 class MetadataExtractor:

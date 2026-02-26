@@ -157,7 +157,7 @@ services:
       - kafka
     environment:
       KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
-      KAFKA_TOPIC_RAW: "RAW"
+      KAFKA_TOPIC_RAW: "raw"
       KAFKA_TOPIC_CLEAN: "clean"
       KAFKA_GROUP_CLEAN: "cleaning_group"
     networks:
@@ -176,7 +176,7 @@ services:
       - elasticsearch
     environment:
       KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
-      KAFKA_TOPIC_RAW: "RAW"
+      KAFKA_TOPIC_RAW: "raw"
       KAFKA_TOPIC_CLEAN: "clean"
       KAFKA_TOPIC_ANALYTIC: "analytic"
       KAFKA_GROUP_INDEXER: "Indexer"
@@ -220,7 +220,7 @@ services:
       - gridfs_service
     environment:
       KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
-      KAFKA_TOPIC_RAW: "RAW"
+      KAFKA_TOPIC_RAW: "raw"
       GRIDFS_SERVICE_URL: "http://gridfs_service:8001"
       IMAGE_DIRECTORY: "/app/images"                                
 

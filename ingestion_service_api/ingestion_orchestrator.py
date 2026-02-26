@@ -16,7 +16,7 @@ from ingestion_config import IngestionConfig
 from OCRengine import OCREngine
 from metadata_extractor import MetadataExtractor
 from mongo_client import MongoLoaderClient
-from kafka_publisher import KafkaPublisher
+from shared.kafka_publisher import KafkaPublisher
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif", ".webp"}
 
