@@ -26,6 +26,7 @@ EXCLUDED_DIR_NAMES = {
     "venv",
     ".venv",   # common; remove if not desired
     "general",
+    "0.general",
     "arc",
     "ignore",
     "data"

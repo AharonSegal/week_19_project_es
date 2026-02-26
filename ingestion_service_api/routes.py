@@ -4,8 +4,8 @@ FastAPI routes for the Ingestion Service.
 """
 
 from fastapi import APIRouter, UploadFile, File, HTTPException
-from ingestion_orchestrator import IngestionOrchestrator
-from main import orchestrator
+from ingestion_orchestrator import orchestrator
+
 router = APIRouter()
 
 

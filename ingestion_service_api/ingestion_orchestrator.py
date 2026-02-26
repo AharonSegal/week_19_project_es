@@ -5,9 +5,13 @@ Constructor: config, ocr_engine, metadata_extractor, Gridfs, publisher, logger
 """
 
 import os
+import sys
 from logging import Logger
 from pathlib import Path
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from shared.logger import get_logger
 from ingestion_config import IngestionConfig
 from OCRengine import OCREngine
 from metadata_extractor import MetadataExtractor
@@ -56,17 +60,18 @@ class IngestionOrchestrator:
 
             # 3. run OCR
             raw_text = self.ocr_engine.extract_text(path)
-
-            # 4. send binary file to GridFS service
-            self.Gridfs.send(path, image_id)
-
-            # 5. publish RAW event
+    
+            # 4. publish RAW event
             event = {
                 "image_id": image_id,
                 "raw_text": raw_text,
                 "metadata": metadata,
             }
             self.publisher.publish(event)
+
+            # 5. send binary file to GridFS service
+            self.Gridfs.send(path, image_id)
+
 
             self.logger.info("Finished processing image_id=%s (%s)", image_id, filename)
 
@@ -106,3 +111,15 @@ class IngestionOrchestrator:
         return summary
 
 
+# ---- wiring ----
+_logger = get_logger("ingestion-service")
+_config = IngestionConfig()
+
+orchestrator = IngestionOrchestrator(
+    config=_config,
+    ocr_engine=OCREngine(_logger),
+    metadata=MetadataExtractor(_logger),
+    Gridfs=MongoLoaderClient(_config.gridfs_service_url, _logger),
+    publisher=KafkaPublisher(_config.bootstrap_servers, _config.kafka_topic_raw, _logger),
+    logger=_logger,
+)
